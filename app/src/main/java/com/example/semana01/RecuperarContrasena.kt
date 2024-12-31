@@ -10,7 +10,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ForgotPasswordForm() {
+fun RecuperarContrasenaForm(
+    onEmailSent: () -> Unit // Callback para navegar al login después de enviar el correo
+) {
     var email by remember { mutableStateOf("") }
     var isEmailSent by remember { mutableStateOf(false) }
 
@@ -55,7 +57,10 @@ fun ForgotPasswordForm() {
 
         // Botón de Enviar
         Button(
-            onClick = { isEmailSent = true },
+            onClick = {
+                isEmailSent = true
+                onEmailSent() // Llamar al callback para ir a login después de enviar el correo
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Enviar")
@@ -79,7 +84,8 @@ fun ForgotPasswordForm() {
 fun PreviewForgotPasswordForm() {
     MaterialTheme {
         Surface {
-            ForgotPasswordForm()
+            // Simulamos la función que podría navegar a otra pantalla
+            RecuperarContrasenaForm(onEmailSent = {})
         }
     }
 }

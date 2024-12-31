@@ -1,5 +1,6 @@
 package com.example.semana01
 
+import RecuperarContrasenaForm
 import android.os.Bundle
 import android.widget.Space
 import androidx.activity.ComponentActivity
@@ -110,12 +111,18 @@ fun MyApp() {
         composable("login") {
             Login(
                 onLoginClick = { navController.navigate("home") },
-                onRegisterClick = { navController.navigate("register") }
+                onRegisterClick = { navController.navigate("register") },
+                onForgotPasswordClick = { navController.navigate("forgotPassword") }
             )
         }
         composable("register") {
             Registro(
                 onRegisterSuccess = { navController.popBackStack() }
+            )
+        }
+        composable("forgotPassword") {
+            RecuperarContrasenaForm(
+                onEmailSent = { navController.popBackStack() } // Regresa a la pantalla de login
             )
         }
         composable("home") {
