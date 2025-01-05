@@ -81,9 +81,14 @@ fun Login(
             label = { Text("Correo electrónico") },
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(5.dp)), // Esquinas redondeadas
+                .clip(RoundedCornerShape(5.dp)),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_email),
+                    contentDescription = "Correo electrónico"
+                )
+            }
         )
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -103,7 +108,13 @@ fun Login(
                     modifier = Modifier.clickable { isPasswordVisible.value = !isPasswordVisible.value }
                 )
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_lock),
+                    contentDescription = "Correo electrónico"
+                )
+            }
         )
 
         Spacer(modifier = Modifier.height(20.dp))

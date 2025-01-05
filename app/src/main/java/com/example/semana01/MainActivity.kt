@@ -116,12 +116,14 @@ fun MyApp() {
         }
         composable("register") {
             Registro(
+                navController = navController,
                 onRegisterSuccess = { navController.popBackStack() }
             )
         }
         composable("forgotPassword") {
             // Aquí se pasa el callback onEmailSent que navegará hacia atrás al login
             RecuperarContrasenaForm(
+                navController = navController,
                 onCodeSent = { navController.popBackStack() } // Regresa a la pantalla de login
             )
         }
