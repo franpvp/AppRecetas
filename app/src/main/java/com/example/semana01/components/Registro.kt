@@ -1,6 +1,5 @@
-package com.example.semana01
+package com.example.semana01.components
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,19 +7,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
-import androidx.navigation.compose.rememberNavController
 import com.example.semana01.utils.UserManager
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import com.example.semana01.R
 
 @Composable
 fun Registro(onRegisterSuccess: () -> Unit) {
@@ -31,6 +31,8 @@ fun Registro(onRegisterSuccess: () -> Unit) {
     val fechaNacimiento = remember { mutableStateOf("") }
     val contrasena = remember { mutableStateOf("") }
     val confirmarContrasena = remember { mutableStateOf("") }
+    val showPassword = remember { mutableStateOf(false) }
+    val showConfirmPassword = remember { mutableStateOf(false) }
 
     val correoError = remember { mutableStateOf(false) }
     val fechaNacimientoError = remember { mutableStateOf(false) }
@@ -87,9 +89,43 @@ fun Registro(onRegisterSuccess: () -> Unit) {
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        TextField(value = contrasena.value, onValueChange = { contrasena.value = it }, label = { Text("Contraseña") }, modifier = Modifier.fillMaxWidth())
+        // Campo de contraseña
+        TextField(
+            value = contrasena.value,
+            onValueChange = { contrasena.value = it },
+            label = { Text("Contraseña") },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { showPassword.value = !showPassword.value }) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (showPassword.value) R.drawable.ic_visibility else R.drawable.ic_visibility_off
+                        ),
+                        contentDescription = if (showPassword.value) "Ocultar contraseña" else "Mostrar contraseña"
+                    )
+                }
+            }
+        )
         Spacer(modifier = Modifier.height(8.dp))
-        TextField(value = confirmarContrasena.value, onValueChange = { confirmarContrasena.value = it }, label = { Text("Confirmar Contraseña") }, modifier = Modifier.fillMaxWidth())
+        // Campo de confirmar contraseña
+        TextField(
+            value = confirmarContrasena.value,
+            onValueChange = { confirmarContrasena.value = it },
+            label = { Text("Confirmar Contraseña") },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = if (showConfirmPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { showConfirmPassword.value = !showConfirmPassword.value }) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (showConfirmPassword.value) R.drawable.ic_visibility else R.drawable.ic_visibility_off
+                        ),
+                        contentDescription = if (showConfirmPassword.value) "Ocultar contraseña" else "Mostrar contraseña"
+                    )
+                }
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(

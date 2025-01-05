@@ -1,20 +1,25 @@
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.semana01.utils.UserManager
 
 @Composable
 fun RecuperarContrasenaForm(
-    onEmailSent: () -> Unit // Callback para navegar al login después de enviar el correo
+    onCodeSent: () -> Unit, // Callback para navegar a la pantalla de verificación del código
 ) {
     var email by remember { mutableStateOf("") }
     var isEmailSent by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -33,7 +38,7 @@ fun RecuperarContrasenaForm(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Ingresa tu correo electrónico registrado. Te enviaremos un enlace para restablecer tu contraseña.",
+            text = "Ingresa tu correo electrónico registrado. Te enviaremos un código para restablecer tu contraseña.",
             fontSize = 14.sp,
             color = Color.Gray
         )
@@ -58,8 +63,17 @@ fun RecuperarContrasenaForm(
         // Botón de Enviar
         Button(
             onClick = {
-                isEmailSent = true
-                onEmailSent() // Llamar al callback para ir a login después de enviar el correo
+                val resetCode = (100000..999999).random().toString() // Código aleatorio
+                val isUserFound = UserManager.saveResetCode(context, email, resetCode)
+
+                if (isUserFound) {
+                    isEmailSent = true
+                    errorMessage = null
+                    onCodeSent() // Navegar a la pantalla de verificación
+                } else {
+                    isEmailSent = false
+                    errorMessage = "El correo ingresado no está registrado."
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -68,24 +82,22 @@ fun RecuperarContrasenaForm(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mensaje de Confirmación
-        if (isEmailSent) {
-            Text(
-                text = "Se ha enviado un enlace a tu correo electrónico.",
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Medium
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewForgotPasswordForm() {
-    MaterialTheme {
-        Surface {
-            // Simulamos la función que podría navegar a otra pantalla
-            RecuperarContrasenaForm(onEmailSent = {})
+        // Mensaje de Error o Confirmación
+        when {
+            isEmailSent -> {
+                Text(
+                    text = "Se ha enviado un código a tu correo electrónico.",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+            errorMessage != null -> {
+                Text(
+                    text = errorMessage ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Medium
+                )
+            }
         }
     }
 }

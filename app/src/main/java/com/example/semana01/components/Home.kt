@@ -1,8 +1,7 @@
-package com.example.semana01
+package com.example.semana01.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -12,21 +11,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.clickable
 import androidx.compose.material3.Card
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import com.example.semana01.R
 
 @Composable
-fun Home() {
+fun Home(navController: NavController) {
     var selectedTab by remember { mutableStateOf(0) }
-    var boxOffset by remember { mutableStateOf(0f) }
 
     // Datos de la minuta semanal
     val minutaSemanal = arrayOf(
@@ -133,19 +129,25 @@ fun Home() {
                 )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = "Search",
+                    contentDescription = "Mensajes",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
                         .size(40.dp)
-                        .clickable { selectedTab = 1 }
+                        .clickable {
+                            selectedTab = 1
+                            navController.navigate("mensajes")
+                        }
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_user),
-                    contentDescription = "User Profile",
+                    painter = painterResource(id = R.drawable.ic_menu),
+                    contentDescription = "Menu",
                     tint = if (selectedTab == 2) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
                         .size(40.dp)
-                        .clickable { selectedTab = 2 }
+                        .clickable {
+                            selectedTab = 2
+                            navController.navigate("menu") // Navega al menú (componente Menu)
+                        }
                 )
             }
         }

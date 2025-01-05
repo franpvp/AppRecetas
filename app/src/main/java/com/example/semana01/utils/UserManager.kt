@@ -16,7 +16,7 @@ object UserManager {
     }
 
     // Convertir la lista de usuarios a JSON para almacenarla
-    private fun saveUsersToPrefs(context: Context, users: List<Pair<String, String>>) {
+    private fun saveUsersToPrefs(context: Context, users: List<User>) {
         val sharedPreferences = getPreferences(context)
         val gson = Gson()
         val usersJson = gson.toJson(users)
@@ -24,14 +24,13 @@ object UserManager {
     }
 
     // Obtener los usuarios almacenados en SharedPreferences
-    private fun getUsersFromPrefs(context: Context): List<Pair<String, String>> {
+    private fun getUsersFromPrefs(context: Context): List<User> {
         val sharedPreferences = getPreferences(context)
         val usersJson = sharedPreferences.getString(KEY_USERS, null)
         val gson = Gson()
 
         return if (usersJson != null) {
-            // Usamos TypeToken para indicar el tipo exacto
-            val type = object : TypeToken<List<Pair<String, String>>>() {}.type
+            val type = object : TypeToken<List<User>>() {}.type
             gson.fromJson(usersJson, type)
         } else {
             emptyList()
@@ -41,13 +40,56 @@ object UserManager {
     // Agregar un nuevo usuario
     fun addUser(context: Context, email: String, password: String) {
         val users = getUsersFromPrefs(context).toMutableList()
-        users.add(email to password)
+        if (users.any { it.email == email }) {
+            throw IllegalArgumentException("El usuario con este correo ya existe.")
+        }
+        users.add(User(email, password))
         saveUsersToPrefs(context, users)
     }
 
-    // Validar si un usuario existe
+    // Validar usuario y contraseña
     fun validateUser(context: Context, email: String, password: String): Boolean {
         val users = getUsersFromPrefs(context)
-        return users.any { it.first == email && it.second == password }
+        return users.any { it.email == email && it.password == password }
+    }
+
+    // Guardar el código de recuperación para un usuario
+    fun saveResetCode(context: Context, email: String, resetCode: String): Boolean {
+        val users = getUsersFromPrefs(context).toMutableList()
+        val user = users.find { it.email == email }
+        return if (user != null) {
+            user.resetCode = resetCode
+            saveUsersToPrefs(context, users)
+            true
+        } else {
+            false
+        }
+    }
+
+    // Validar el código de recuperación
+    fun validateResetCode(context: Context, email: String, resetCode: String): Boolean {
+        val users = getUsersFromPrefs(context)
+        return users.any { it.email == email && it.resetCode == resetCode }
+    }
+
+    // Actualizar la contraseña de un usuario
+    fun updatePassword(context: Context, email: String, newPassword: String): Boolean {
+        val users = getUsersFromPrefs(context).toMutableList()
+        val user = users.find { it.email == email }
+        return if (user != null) {
+            user.password = newPassword
+            user.resetCode = null // Limpiar el código después del cambio
+            saveUsersToPrefs(context, users)
+            true
+        } else {
+            false
+        }
     }
 }
+
+// Data class para el usuario
+data class User(
+    val email: String,
+    var password: String,
+    var resetCode: String? = null
+)

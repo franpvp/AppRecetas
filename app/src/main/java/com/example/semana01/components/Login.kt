@@ -1,6 +1,7 @@
-package com.example.semana01
+package com.example.semana01.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,11 +12,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,9 +31,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import com.example.semana01.R
 import com.example.semana01.utils.UserManager
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login(
     onLoginClick: () -> Unit,
@@ -36,6 +49,7 @@ fun Login(
     val context = LocalContext.current // Obtenemos el contexto
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
+    val isPasswordVisible = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -60,28 +74,39 @@ fun Login(
                 .padding(bottom = 16.dp),
             color = MaterialTheme.colorScheme.primary
         )
-
         // Campo para el correo
-        TextField(
+        OutlinedTextField(
             value = email.value,
             onValueChange = { email.value = it },
             label = { Text("Correo electrónico") },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
-        )
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(5.dp)), // Esquinas redondeadas
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
 
-        Spacer(modifier = Modifier.height(16.dp))
+        )
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Campo para la contraseña
-        TextField(
+        OutlinedTextField(
             value = password.value,
             onValueChange = { password.value = it },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
+            visualTransformation = if (isPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                Icon(
+                    painter = painterResource(
+                        id = if (isPasswordVisible.value) R.drawable.ic_visibility else R.drawable.ic_visibility_off
+                    ),
+                    contentDescription = if (isPasswordVisible.value) "Ocultar contraseña" else "Mostrar contraseña",
+                    modifier = Modifier.clickable { isPasswordVisible.value = !isPasswordVisible.value }
+                )
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // Botón de iniciar sesión
         Button(
@@ -122,7 +147,7 @@ fun Login(
         // Iconos en la parte inferior
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly, // Espaciado equitativo
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
