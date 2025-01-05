@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Card
+import androidx.navigation.NavHostController
 import com.example.semana01.R
 
 @Composable
@@ -89,7 +90,6 @@ fun Home() {
 //            }
 //        }
 
-        // Minuta Semanal
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)

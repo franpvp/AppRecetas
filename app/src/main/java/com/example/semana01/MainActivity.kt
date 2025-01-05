@@ -35,12 +35,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.semana01.ui.theme.Semana01Theme
+import com.example.semana01.Home
 
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +55,7 @@ class MainActivity : ComponentActivity() {
                         MyApp()
                     }
                 }
+
             }
         }
     }
@@ -109,6 +109,7 @@ fun MyApp() {
         startDestination = "login"
     ) {
         composable("login") {
+            // Pasamos navController al Login Composable
             Login(
                 onLoginClick = { navController.navigate("home") },
                 onRegisterClick = { navController.navigate("register") },
@@ -125,8 +126,21 @@ fun MyApp() {
                 onEmailSent = { navController.popBackStack() } // Regresa a la pantalla de login
             )
         }
+        // Pantalla "home" con menú lateral habilitado
         composable("home") {
             Home()
         }
+
+        // Ejemplo de pantalla adicional, sin menú lateral
+        composable("profile") {
+            Perfil(
+                "Francisca",
+                "Valdivia",
+                "franpvp.98@gmail.com",
+                "949199315",
+                "30/03/1998"
+            )
+        }
+
     }
 }

@@ -24,14 +24,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
-
+import androidx.compose.ui.platform.LocalContext
+import com.example.semana01.utils.UserManager
 
 @Composable
 fun Login(
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
-    onForgotPasswordClick: () -> Unit
+    onForgotPasswordClick: () -> Unit,
 ) {
+    val context = LocalContext.current // Obtenemos el contexto
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
 
@@ -48,8 +50,15 @@ fun Login(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo",
             modifier = Modifier
-                .size(120.dp) // Tamaño del logo
+                .size(250.dp) // Tamaño del logo
                 .padding(bottom = 24.dp) // Espaciado debajo del logo
+        )
+        Text(
+            text = "Iniciar Sesión",
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier
+                .padding(bottom = 16.dp),
+            color = MaterialTheme.colorScheme.primary
         )
 
         // Campo para el correo
@@ -76,7 +85,13 @@ fun Login(
 
         // Botón de iniciar sesión
         Button(
-            onClick = onLoginClick, // Llama a la función onLoginClick
+            onClick = {
+                if (UserManager.validateUser(context, email.value, password.value)) {
+                    onLoginClick() // Credenciales válidas
+                } else {
+                    // Mostrar mensaje de error
+                }
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Iniciar sesión")
