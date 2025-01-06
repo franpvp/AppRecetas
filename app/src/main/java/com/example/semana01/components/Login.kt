@@ -46,10 +46,11 @@ fun Login(
     onRegisterClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
 ) {
-    val context = LocalContext.current // Obtenemos el contexto
+    val context = LocalContext.current
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
     val isPasswordVisible = remember { mutableStateOf(false) }
+    val loginError = remember { mutableStateOf(false) } // Estado para el error
 
     Column(
         modifier = Modifier
@@ -61,12 +62,13 @@ fun Login(
 
         // Logo en la parte superior
         Image(
-            painter = painterResource(id = R.drawable.logo),
+            painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = "Logo",
             modifier = Modifier
-                .size(250.dp) // Tamaño del logo
-                .padding(bottom = 24.dp) // Espaciado debajo del logo
+                .size(250.dp)
+                .padding(bottom = 24.dp)
         )
+
         Text(
             text = "Iniciar Sesión",
             style = MaterialTheme.typography.headlineLarge,
@@ -74,10 +76,14 @@ fun Login(
                 .padding(bottom = 16.dp),
             color = MaterialTheme.colorScheme.primary
         )
-        // Campo para el correo
+
+        // Campo de correo electrónico
         OutlinedTextField(
             value = email.value,
-            onValueChange = { email.value = it },
+            onValueChange = {
+                email.value = it
+                loginError.value = false // Limpiar error al cambiar el email
+            },
             label = { Text("Correo electrónico") },
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,12 +96,16 @@ fun Login(
                 )
             }
         )
+
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Campo para la contraseña
+        // Campo de contraseña
         OutlinedTextField(
             value = password.value,
-            onValueChange = { password.value = it },
+            onValueChange = {
+                password.value = it
+                loginError.value = false // Limpiar error al cambiar la contraseña
+            },
             label = { Text("Contraseña") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = if (isPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
@@ -112,9 +122,29 @@ fun Login(
             leadingIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_lock),
-                    contentDescription = "Correo electrónico"
+                    contentDescription = "Contraseña"
                 )
             }
+        )
+
+        // Mostrar mensaje de error si las credenciales son incorrectas
+        if (loginError.value) {
+            Text(
+                text = "Correo o contraseña incorrectos.",
+                color = Color.Red,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+        }
+
+        Text(
+            text = "¿Olvidaste tu contraseña?",
+            modifier = Modifier
+                .clickable { onForgotPasswordClick() }
+                .align(Alignment.Start)
+                .padding(top = 8.dp),
+            color = MaterialTheme.colorScheme.primary
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -123,9 +153,9 @@ fun Login(
         Button(
             onClick = {
                 if (UserManager.validateUser(context, email.value, password.value)) {
-                    onLoginClick() // Credenciales válidas
+                    onLoginClick()
                 } else {
-                    // Mostrar mensaje de error
+                    loginError.value = true // Mostrar error si las credenciales no son válidas
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -135,21 +165,19 @@ fun Login(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botón de registrarse
-        Button(
-            onClick = onRegisterClick, // Llama a la función onRegisterClick
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Registrarse")
-        }
+        Text(
+            text = "¿No tienes cuenta? Regístrate",
+            modifier = Modifier
+                .clickable { onRegisterClick() }
+                .padding(top = 8.dp),
+            color = MaterialTheme.colorScheme.primary
+        )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         Text(
-            text = "¿Olvidaste tu contraseña?",
-            modifier = Modifier
-                .clickable { onForgotPasswordClick() } // Llama a la función onForgotPasswordClick
-                .padding(top = 8.dp),
+            text = "o inicia sesión con",
+            modifier = Modifier.padding(top = 8.dp),
             color = MaterialTheme.colorScheme.primary
         )
 

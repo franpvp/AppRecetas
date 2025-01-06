@@ -16,13 +16,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.example.semana01.R
 
 @Composable
 fun Home(navController: NavController) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     // Datos de la minuta semanal
     val minutaSemanal = arrayOf(
@@ -99,9 +107,10 @@ fun Home(navController: NavController) {
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-            minutaSemanal.forEach { receta ->
-                RecetaCard(receta = receta)
-            }
+//            minutaSemanal.forEach { receta ->
+//                RecetaCard(receta = receta)
+//            }
+            ElevatedCardExample()
         }
 
         // Tab Bar at the Bottom
@@ -197,6 +206,93 @@ fun RecetaCard(receta: Receta) {
         }
     }
 }
+
+// Card
+@Composable
+fun ElevatedCardExample() {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
+        modifier = Modifier
+            .size(width = 240.dp, height = 100.dp)
+    ) {
+        Text(
+            text = "Elevated",
+            modifier = Modifier
+                .padding(16.dp),
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+//Mensaje Diálogo
+@Composable
+fun AlertDialogExample(
+    onDismissRequest: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogTitle: String,
+    dialogText: String,
+    icon: ImageVector,
+) {
+    AlertDialog(
+        icon = {
+            Icon(icon, contentDescription = "Example Icon")
+        },
+        title = {
+            Text(text = dialogTitle)
+        },
+        text = {
+            Text(text = dialogText)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    //navController.navigate("login")
+                    onConfirmation()
+                }
+            ) {
+                Text("Cerrar")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
+                }
+            ) {
+                Text("Dismiss")
+            }
+        }
+    )
+}
+
+@Composable
+fun DialogExamples() {
+    // ...
+    val openAlertDialog = remember { mutableStateOf(false) }
+
+    // ...
+    when {
+        // ...
+        openAlertDialog.value -> {
+            AlertDialogExample(
+                onDismissRequest = { openAlertDialog.value = false },
+                onConfirmation = {
+                    openAlertDialog.value = false
+                    println("Confirmation registered") // Add logic here to handle confirmation.
+                },
+                dialogTitle = "Alert dialog example",
+                dialogText = "This is an example of an alert dialog with buttons.",
+                icon = Icons.Default.Info
+            )
+        }
+    }
+}
+
 
 data class Receta(
     val nombre: String,
