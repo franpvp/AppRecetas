@@ -24,7 +24,7 @@ object UserManager {
     }
 
     // Obtener los usuarios almacenados en SharedPreferences
-    private fun getUsersFromPrefs(context: Context): List<User> {
+    fun getUsersFromPrefs(context: Context): List<User> {
         val sharedPreferences = getPreferences(context)
         val usersJson = sharedPreferences.getString(KEY_USERS, null)
         val gson = Gson()
@@ -38,12 +38,12 @@ object UserManager {
     }
 
     // Agregar un nuevo usuario
-    fun addUser(context: Context, email: String, password: String) {
+    fun addUser(context: Context, email: String, password: String, firstName: String, lastName: String) {
         val users = getUsersFromPrefs(context).toMutableList()
         if (users.any { it.email == email }) {
             throw IllegalArgumentException("El usuario con este correo ya existe.")
         }
-        users.add(User(email, password))
+        users.add(User(email, password, firstName = firstName, lastName = lastName))
         saveUsersToPrefs(context, users)
     }
 
@@ -91,5 +91,7 @@ object UserManager {
 data class User(
     val email: String,
     var password: String,
-    var resetCode: String? = null
+    var resetCode: String? = null,
+    val firstName: String,
+    val lastName: String
 )
