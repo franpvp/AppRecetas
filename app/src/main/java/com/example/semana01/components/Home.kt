@@ -9,22 +9,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.TextButton
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
+
 import androidx.navigation.NavController
 import com.example.semana01.R
 
@@ -32,88 +24,56 @@ import com.example.semana01.R
 fun Home(navController: NavController) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
-    // Datos de la minuta semanal
-    val minutaSemanal = arrayOf(
-        Receta(
-            nombre = "Ensalada de Quinoa",
-            ingredientes = listOf("Quinoa", "Pepino", "Tomate", "Aguacate", "Limón", "Aceite de oliva"),
-            instrucciones = "Cocina la quinoa, mezcla con los vegetales picados y aliña con aceite de oliva y limón.",
-            recomendacionesNutricionales = "Alta en fibra, proteínas vegetales y grasas saludables."
-        ),
-        Receta(
-            nombre = "Pollo a la plancha con verduras",
-            ingredientes = listOf("Pechuga de pollo", "Zanahoria", "Brócoli", "Aceite de oliva", "Especias"),
-            instrucciones = "Cocina el pollo a la plancha y acompáñalo con las verduras al vapor.",
-            recomendacionesNutricionales = "Fuente rica en proteínas magras y vegetales ricos en vitaminas."
-        ),
-        Receta(
-            nombre = "Sopa de lentejas",
-            ingredientes = listOf("Lentejas", "Zanahoria", "Apio", "Cebolla", "Caldo de verduras"),
-            instrucciones = "Cocina las lentejas con las verduras y el caldo hasta que estén tiernas.",
-            recomendacionesNutricionales = "Rica en hierro, fibra y proteínas vegetales."
-        ),
-        Receta(
-            nombre = "Tacos de pescado",
-            ingredientes = listOf("Filete de pescado", "Tortillas de maíz", "Lechuga", "Tomate", "Cebolla"),
-            instrucciones = "Cocina el pescado y sirve en tortillas con lechuga, tomate y cebolla.",
-            recomendacionesNutricionales = "Bajo en grasas, fuente de omega-3 y vitaminas."
-        ),
-        Receta(
-            nombre = "Batido de frutas y avena",
-            ingredientes = listOf("Frutas (fresas, plátano)", "Avena", "Yogur natural", "Miel"),
-            instrucciones = "Licúa las frutas con avena, yogur y miel hasta obtener una mezcla suave.",
-            recomendacionesNutricionales = "Rico en antioxidantes, fibra y probióticos."
-        )
-    )
-
     Box(modifier = Modifier.fillMaxSize()) {
-        // Slideable Content
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .pointerInput(Unit) {
-//                    detectHorizontalDragGestures { _, dragAmount ->
-//                        boxOffset += dragAmount
-//                    }
-//                }
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .offset(x = boxOffset.dp)
-//                    .fillMaxWidth()
-//                    .height(200.dp)
-//                    .padding(16.dp)
-//                    .background(MaterialTheme.colorScheme.primary)
-//            ) {
-//                Text(
-//                    text = "Slide Me!",
-//                    fontSize = 24.sp,
-//                    color = Color.White,
-//                    modifier = Modifier.align(Alignment.Center)
-//                )
-//            }
-//        }
-
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())  // Agregar el scroll vertical aquí
+                .verticalScroll(rememberScrollState())  // Scroll vertical
         ) {
+            // Título del Home
             Text(
-                text = "Minuta Semanal",
+                text = "Accesibilidad para Todos",
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
 
-//            minutaSemanal.forEach { receta ->
-//                RecetaCard(receta = receta)
-//            }
-            ElevatedCardExample()
+            // Tarjetas con funcionalidades
+            FuncionalidadCard(
+                title = "Reconocimiento de Texto (OCR)",
+                description = "Extrae texto de documentos como PDFs e imágenes para convertirlo en audio o texto accesible.",
+                onClick = { /* Acción al hacer clic, por ejemplo, navegar a una pantalla de OCR */ }
+            )
+            FuncionalidadCard(
+                title = "Clasificación Automática",
+                description = "Organiza documentos en categorías como contratos, recibos y más, para facilitar su gestión.",
+                onClick = { /* Acción al hacer clic */ }
+            )
+            FuncionalidadCard(
+                title = "Accesibilidad Total",
+                description = "Interfaz optimizada para lectores de pantalla y comandos de voz, garantizando la independencia del usuario.",
+                onClick = { /* Acción al hacer clic */ }
+            )
+            FuncionalidadCard(
+                title = "Traducción Automática",
+                description = "Convierte documentos en otros idiomas a tu idioma preferido para una comprensión más fácil.",
+                onClick = { /* Acción al hacer clic */ }
+            )
+            FuncionalidadCard(
+                title = "Validación de Firmas Digitales",
+                description = "Permite verificar la autenticidad de documentos con firmas digitales.",
+                onClick = { /* Acción al hacer clic */ }
+            )
+            FuncionalidadCard(
+                title = "Seguridad y Privacidad",
+                description = "Encriptación de datos y autenticación segura para proteger tu información personal.",
+                onClick = { /* Acción al hacer clic */ }
+            )
+            Spacer(modifier = Modifier.height(64.dp))
         }
 
-        // Tab Bar at the Bottom
+        // Barra de navegación inferior
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -155,7 +115,7 @@ fun Home(navController: NavController) {
                         .size(40.dp)
                         .clickable {
                             selectedTab = 2
-                            navController.navigate("menu") // Navega al menú (componente Menu)
+                            navController.navigate("menu") // Navega al menú
                         }
                 )
             }
@@ -163,140 +123,34 @@ fun Home(navController: NavController) {
     }
 }
 
+// Composable para la tarjeta de funcionalidad
 @Composable
-fun RecetaCard(receta: Receta) {
-    Card(
+fun FuncionalidadCard(title: String, description: String, onClick: () -> Unit) {
+    ElevatedCard(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 6.dp
+        ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .shadow(8.dp)
-            .background(MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.medium
+            .padding(8.dp)
+            .clickable(onClick = onClick)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(text = receta.nombre, style = MaterialTheme.typography.bodyLarge, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Ingredientes:",
+                text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = receta.ingredientes.joinToString(", "), style = MaterialTheme.typography.bodySmall)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Instrucciones:",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = receta.instrucciones, style = MaterialTheme.typography.bodySmall)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Recomendaciones Nutricionales:",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = receta.recomendacionesNutricionales, style = MaterialTheme.typography.bodySmall)
-        }
-    }
-}
-
-// Card
-@Composable
-fun ElevatedCardExample() {
-    ElevatedCard(
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 6.dp
-        ),
-        modifier = Modifier
-            .size(width = 240.dp, height = 100.dp)
-    ) {
-        Text(
-            text = "Elevated",
-            modifier = Modifier
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-        )
-    }
-}
-
-//Mensaje Diálogo
-@Composable
-fun AlertDialogExample(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
-    dialogTitle: String,
-    dialogText: String,
-    icon: ImageVector,
-) {
-    AlertDialog(
-        icon = {
-            Icon(icon, contentDescription = "Example Icon")
-        },
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    //navController.navigate("login")
-                    onConfirmation()
-                }
-            ) {
-                Text("Cerrar")
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text("Dismiss")
-            }
-        }
-    )
-}
-
-@Composable
-fun DialogExamples() {
-    // ...
-    val openAlertDialog = remember { mutableStateOf(false) }
-
-    // ...
-    when {
-        // ...
-        openAlertDialog.value -> {
-            AlertDialogExample(
-                onDismissRequest = { openAlertDialog.value = false },
-                onConfirmation = {
-                    openAlertDialog.value = false
-                    println("Confirmation registered") // Add logic here to handle confirmation.
-                },
-                dialogTitle = "Alert dialog example",
-                dialogText = "This is an example of an alert dialog with buttons.",
-                icon = Icons.Default.Info
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
     }
 }
-
-
-data class Receta(
-    val nombre: String,
-    val ingredientes: List<String>,
-    val instrucciones: String,
-    val recomendacionesNutricionales: String
-)

@@ -227,7 +227,7 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
                         isValidEmail(correo.value) &&
                         contrasena.value.isNotEmpty() &&
                         contrasena.value == confirmarContrasena.value) {
-                        UserManager.addUser(context, correo.value, contrasena.value)
+                        UserManager.addUser(context, correo.value, contrasena.value, nombre.value, apellido.value)
                         onRegisterSuccess()
                     }
                 },
