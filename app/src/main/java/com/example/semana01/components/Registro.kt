@@ -1,30 +1,37 @@
 package com.example.semana01.components
 
-import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.semana01.R
 import com.example.semana01.utils.UserManager
+
 import java.text.SimpleDateFormat
 import java.util.*
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
@@ -38,6 +45,11 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
     val showPassword = remember { mutableStateOf(false) }
     val showConfirmPassword = remember { mutableStateOf(false) }
     val correoError = remember { mutableStateOf(false) }
+    val celularError = remember { mutableStateOf(false) }
+    val nombreError = remember { mutableStateOf(false) }
+    val apellidoError = remember { mutableStateOf(false) }
+    val contrasenaError = remember { mutableStateOf(false) }
+    val confirmarContrasenaError = remember { mutableStateOf(false) }
 
     // Estado para mostrar el DatePickerDialog
     var showDatePicker by remember { mutableStateOf(false) }
@@ -47,90 +59,85 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
     } ?: ""
 
 
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Icono de Volver
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .align(Alignment.TopStart)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    contentDescription = "Volver",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-
-        // Título del Registro
-        Text(
-            text = "Registro",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(bottom = 16.dp)
+        // TopAppBar con icono de retroceso
+        TopAppBar(
+            title = { Text("Registro") },
+            navigationIcon = {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_back),
+                        contentDescription = "Volver",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campos de entrada
-        TextField(
+        // Campos de entrada con validación
+        InputField(
             value = nombre.value,
             onValueChange = { nombre.value = it },
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth()
+            label = "Nombre",
+            modifier = Modifier.fillMaxWidth(),
+            isError = nombreError.value
         )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        TextField(
+        InputField(
             value = apellido.value,
             onValueChange = { apellido.value = it },
-            label = { Text("Apellido") },
-            modifier = Modifier.fillMaxWidth()
+            label = "Apellido",
+            modifier = Modifier.fillMaxWidth(),
+            isError = apellidoError.value
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(
+        // Validación de correo electrónico
+        InputField(
             value = correo.value,
             onValueChange = {
                 correo.value = it
                 correoError.value = !isValidEmail(it)
             },
-            label = { Text("Correo electrónico") },
-            isError = correoError.value,
-            modifier = Modifier.fillMaxWidth()
+            label = "Correo electrónico",
+            modifier = Modifier.fillMaxWidth(),
+            isError = correoError.value
         )
         if (correoError.value) {
             Text(
                 text = "Correo inválido",
                 color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.align(Alignment.Start)
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
 
-        TextField(
+        // Validación celular (solo números)
+        InputField(
             value = celular.value,
-            onValueChange = { celular.value = it },
-            label = { Text("Celular") },
-            modifier = Modifier.fillMaxWidth()
+            onValueChange = {
+                celular.value = it
+                celularError.value = !it.matches("^[0-9]+$".toRegex())  // Solo números
+            },
+            label = "Celular",
+            modifier = Modifier.fillMaxWidth(),
+            isError = celularError.value,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         // Campo de Fecha de Nacimiento
         OutlinedTextField(
-            value = fechaNacimiento.value,
+            value = selectedDate,
             onValueChange = { },
             label = { Text("Fecha de Nacimiento") },
             readOnly = true,
@@ -144,49 +151,18 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp)
+                .padding(vertical = 8.dp)
+                .background(MaterialTheme.colorScheme.surface),
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+            )
         )
 
-        // Mostrar DatePicker en Popup
+        // Dialog de selección de fecha
         if (showDatePicker) {
-            Popup(
-                onDismissRequest = { showDatePicker = false },
-                alignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .shadow(elevation = 4.dp)
-                        .background(MaterialTheme.colorScheme.surface)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        DatePicker(
-                            state = datePickerState,
-                            showModeToggle = true
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Botón de confirmación
-                        Button(
-                            onClick = {
-                                fechaNacimiento.value = convertMillisToDate(datePickerState.selectedDateMillis ?: 0L)
-                                showDatePicker = false // Cerrar el DatePicker
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Confirmar Fecha")
-                        }
-                    }
-                }
-            }
+            DatePickerDialog(datePickerState, onDismiss = { showDatePicker = false })
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         // Contraseña y Confirmar Contraseña
         PasswordField(
@@ -196,7 +172,6 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
             showPassword = showPassword.value,
             onTogglePasswordVisibility = { showPassword.value = !showPassword.value }
         )
-        Spacer(modifier = Modifier.height(8.dp))
 
         PasswordField(
             value = confirmarContrasena.value,
@@ -205,25 +180,102 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
             showPassword = showConfirmPassword.value,
             onTogglePasswordVisibility = { showConfirmPassword.value = !showConfirmPassword.value }
         )
-        Spacer(modifier = Modifier.height(16.dp))
 
         // Botón Registrarse
         Button(
             onClick = {
-                if (correoError.value || contrasena.value != confirmarContrasena.value) {
-                    // Mostrar errores
-                } else {
-                    //UserManager.addUser(correo.value, contrasena.value)
+                // Validación de campos
+                nombreError.value = nombre.value.isEmpty()
+                apellidoError.value = apellido.value.isEmpty()
+                celularError.value = celular.value.isEmpty() || celularError.value
+                correoError.value = correo.value.isEmpty() || !isValidEmail(correo.value)
+                contrasenaError.value = contrasena.value.isEmpty()
+                confirmarContrasenaError.value = confirmarContrasena.value.isEmpty()
+
+                if (nombre.value.isNotEmpty() &&
+                    apellido.value.isNotEmpty() &&
+                    celular.value.isNotEmpty() &&
+                    isValidEmail(correo.value) &&
+                    contrasena.value.isNotEmpty() &&
+                    contrasena.value == confirmarContrasena.value) {
+                    UserManager.addUser(context, correo.value, contrasena.value)
                     onRegisterSuccess()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
+            )
         ) {
             Text("Registrarse")
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun InputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        isError = isError,
+        keyboardOptions = keyboardOptions,
+        modifier = modifier
+            .padding(vertical = 8.dp),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerDialog(datePickerState: DatePickerState, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    showModeToggle = true
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Botón de confirmación
+                Button(
+                    onClick = {
+                        onDismiss()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Confirmar Fecha")
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordField(
     value: String,
@@ -236,7 +288,6 @@ fun PasswordField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        modifier = Modifier.fillMaxWidth(),
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
             IconButton(onClick = onTogglePasswordVisibility) {
@@ -247,12 +298,19 @@ fun PasswordField(
                     contentDescription = "Toggle Password Visibility"
                 )
             }
-        }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        colors = TextFieldDefaults.textFieldColors(
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+        )
     )
 }
 
 fun convertMillisToDate(millis: Long): String {
-    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     return formatter.format(Date(millis))
 }
 
