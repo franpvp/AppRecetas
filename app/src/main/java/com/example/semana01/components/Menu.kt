@@ -120,7 +120,7 @@ fun Menu(navController: NavController) {
                         }
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
+                    painter = painterResource(id = R.drawable.ic_email),
                     contentDescription = "Search",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier

@@ -30,7 +30,7 @@ fun Home(navController: NavController) {
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())  // Scroll vertical
+                .verticalScroll(rememberScrollState())
         ) {
             // Título del Home
             Text(
@@ -69,11 +69,11 @@ fun Home(navController: NavController) {
                 title = "Seguridad y Privacidad",
                 description = "Encriptación de datos y autenticación segura para proteger tu información personal.",
                 onClick = { /* Acción al hacer clic */ }
+
             )
             Spacer(modifier = Modifier.height(64.dp))
         }
-
-        // Barra de navegación inferior
+        // Tab
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -93,15 +93,15 @@ fun Home(navController: NavController) {
                     contentDescription = "Home",
                     tint = if (selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(20.dp)  // Tamaño modificado
                         .clickable { selectedTab = 0 }
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
+                    painter = painterResource(id = R.drawable.ic_email),
                     contentDescription = "Mensajes",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(20.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 1
                             navController.navigate("mensajes")
@@ -112,10 +112,10 @@ fun Home(navController: NavController) {
                     contentDescription = "Menu",
                     tint = if (selectedTab == 2) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(20.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 2
-                            navController.navigate("menu") // Navega al menú
+                            navController.navigate("menu")
                         }
                 )
             }
