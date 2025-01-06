@@ -1,24 +1,31 @@
 package com.example.semana01.components
 
 import android.app.DatePickerDialog
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.example.semana01.R
 import com.example.semana01.utils.UserManager
 import java.text.SimpleDateFormat
 import java.util.*
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
     val nombre = remember { mutableStateOf("") }
@@ -33,7 +40,12 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
     val correoError = remember { mutableStateOf(false) }
 
     // Estado para mostrar el DatePickerDialog
-    val showDatePicker = remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
+    val selectedDate = datePickerState.selectedDateMillis?.let {
+        convertMillisToDate(it)
+    } ?: ""
+
 
     Column(
         modifier = Modifier
@@ -117,30 +129,63 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
 
         // Campo de Fecha de Nacimiento
-        TextField(
+        OutlinedTextField(
             value = fechaNacimiento.value,
-            onValueChange = {},
+            onValueChange = { },
             label = { Text("Fecha de Nacimiento") },
             readOnly = true,
+            trailingIcon = {
+                IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select date"
+                    )
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { showDatePicker.value = true }
+                .height(64.dp)
         )
 
-        // DatePickerDialog
-        if (showDatePicker.value) {
-            val calendar = Calendar.getInstance()
-            DatePickerDialog(
-                context = LocalContext.current,
-                onDateSelected = { selectedDate ->
-                    fechaNacimiento.value = selectedDate
-                    showDatePicker.value = false
-                },
-                initialYear = calendar.get(Calendar.YEAR),
-                initialMonth = calendar.get(Calendar.MONTH),
-                initialDay = calendar.get(Calendar.DAY_OF_MONTH)
-            )
+        // Mostrar DatePicker en Popup
+        if (showDatePicker) {
+            Popup(
+                onDismissRequest = { showDatePicker = false },
+                alignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .shadow(elevation = 4.dp)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        DatePicker(
+                            state = datePickerState,
+                            showModeToggle = true
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Botón de confirmación
+                        Button(
+                            onClick = {
+                                fechaNacimiento.value = convertMillisToDate(datePickerState.selectedDateMillis ?: 0L)
+                                showDatePicker = false // Cerrar el DatePicker
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Confirmar Fecha")
+                        }
+                    }
+                }
+            }
         }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Contraseña y Confirmar Contraseña
@@ -206,22 +251,9 @@ fun PasswordField(
     )
 }
 
-@Composable
-fun DatePickerDialog(
-    context: android.content.Context,
-    onDateSelected: (String) -> Unit,
-    initialYear: Int,
-    initialMonth: Int,
-    initialDay: Int
-) {
-    DisposableEffect(Unit) {
-        val datePickerDialog = DatePickerDialog(context, { _, year, month, dayOfMonth ->
-            val selectedDate = "$dayOfMonth/${month + 1}/$year"
-            onDateSelected(selectedDate)
-        }, initialYear, initialMonth, initialDay)
-        datePickerDialog.show()
-        onDispose { datePickerDialog.dismiss() }
-    }
+fun convertMillisToDate(millis: Long): String {
+    val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    return formatter.format(Date(millis))
 }
 
 fun isValidEmail(email: String): Boolean {
