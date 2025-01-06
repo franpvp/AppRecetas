@@ -34,8 +34,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
 import com.example.semana01.R
 import com.example.semana01.utils.UserManager
 
@@ -158,9 +160,15 @@ fun Login(
                     loginError.value = true // Mostrar error si las credenciales no son válidas
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp, horizontal = 10.dp),
         ) {
-            Text("Iniciar sesión")
+            Text(
+                text = "Iniciar Sesión",
+                fontSize = 16.sp, // Tamaño de texto más grande
+                fontWeight = FontWeight.Bold // Opción para hacer el texto más resaltado
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
