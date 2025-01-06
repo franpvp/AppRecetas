@@ -19,11 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.semana01.R
@@ -58,161 +60,194 @@ fun Registro(onRegisterSuccess: () -> Unit, navController: NavController) {
         convertMillisToDate(it)
     } ?: ""
 
-
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
     ) {
-        // TopAppBar con icono de retroceso
-        TopAppBar(
-            title = { Text("Registro") },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // TopAppBar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                // Fecha en la esquina superior izquierda
+                Text(
+                    text = selectedDate,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.align(Alignment.TopStart)
+                )
+
+                // Título centrado
+                Text(
+                    text = "Registro",
+                    fontSize = 35.sp,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary, // Cambia el color aquí
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                )
+
+                // Icono de retroceso a la izquierda
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.align(Alignment.TopStart)
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
                         contentDescription = "Volver",
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-            },
-            colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-        )
+            }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
-        // Campos de entrada con validación
-        InputField(
-            value = nombre.value,
-            onValueChange = { nombre.value = it },
-            label = "Nombre",
-            modifier = Modifier.fillMaxWidth(),
-            isError = nombreError.value
-        )
-        InputField(
-            value = apellido.value,
-            onValueChange = { apellido.value = it },
-            label = "Apellido",
-            modifier = Modifier.fillMaxWidth(),
-            isError = apellidoError.value
-        )
-
-        // Validación de correo electrónico
-        InputField(
-            value = correo.value,
-            onValueChange = {
-                correo.value = it
-                correoError.value = !isValidEmail(it)
-            },
-            label = "Correo electrónico",
-            modifier = Modifier.fillMaxWidth(),
-            isError = correoError.value
-        )
-        if (correoError.value) {
-            Text(
-                text = "Correo inválido",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.Start)
+            // Campos de entrada con validación
+            InputField(
+                value = nombre.value,
+                onValueChange = { nombre.value = it },
+                label = "Nombre",
+                modifier = Modifier.fillMaxWidth(),
+                isError = nombreError.value
             )
-        }
-
-        // Validación celular (solo números)
-        InputField(
-            value = celular.value,
-            onValueChange = {
-                celular.value = it
-                celularError.value = !it.matches("^[0-9]+$".toRegex())  // Solo números
-            },
-            label = "Celular",
-            modifier = Modifier.fillMaxWidth(),
-            isError = celularError.value,
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
-        )
-
-        // Campo de Fecha de Nacimiento
-        OutlinedTextField(
-            value = selectedDate,
-            onValueChange = { },
-            label = { Text("Fecha de Nacimiento") },
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { showDatePicker = !showDatePicker }) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "Select date"
-                    )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .background(MaterialTheme.colorScheme.surface),
-            colors = TextFieldDefaults.textFieldColors(
-                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+            InputField(
+                value = apellido.value,
+                onValueChange = { apellido.value = it },
+                label = "Apellido",
+                modifier = Modifier.fillMaxWidth(),
+                isError = apellidoError.value
             )
-        )
 
-        // Dialog de selección de fecha
-        if (showDatePicker) {
-            DatePickerDialog(datePickerState, onDismiss = { showDatePicker = false })
-        }
-
-        // Contraseña y Confirmar Contraseña
-        PasswordField(
-            value = contrasena.value,
-            onValueChange = { contrasena.value = it },
-            label = "Contraseña",
-            showPassword = showPassword.value,
-            onTogglePasswordVisibility = { showPassword.value = !showPassword.value }
-        )
-
-        PasswordField(
-            value = confirmarContrasena.value,
-            onValueChange = { confirmarContrasena.value = it },
-            label = "Confirmar Contraseña",
-            showPassword = showConfirmPassword.value,
-            onTogglePasswordVisibility = { showConfirmPassword.value = !showConfirmPassword.value }
-        )
-
-        // Botón Registrarse
-        Button(
-            onClick = {
-                // Validación de campos
-                nombreError.value = nombre.value.isEmpty()
-                apellidoError.value = apellido.value.isEmpty()
-                celularError.value = celular.value.isEmpty() || celularError.value
-                correoError.value = correo.value.isEmpty() || !isValidEmail(correo.value)
-                contrasenaError.value = contrasena.value.isEmpty()
-                confirmarContrasenaError.value = confirmarContrasena.value.isEmpty()
-
-                if (nombre.value.isNotEmpty() &&
-                    apellido.value.isNotEmpty() &&
-                    celular.value.isNotEmpty() &&
-                    isValidEmail(correo.value) &&
-                    contrasena.value.isNotEmpty() &&
-                    contrasena.value == confirmarContrasena.value) {
-                    UserManager.addUser(context, correo.value, contrasena.value, nombre.value,apellido.value)
-                    onRegisterSuccess()
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White
+            // Validación de correo electrónico
+            InputField(
+                value = correo.value,
+                onValueChange = {
+                    correo.value = it
+                    correoError.value = !isValidEmail(it)
+                },
+                label = "Correo electrónico",
+                modifier = Modifier.fillMaxWidth(),
+                isError = correoError.value
             )
-        ) {
-            Text("Registrarse")
+            if (correoError.value) {
+                Text(
+                    text = "Correo inválido",
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+            }
+
+            // Validación celular (solo números)
+            InputField(
+                value = celular.value,
+                onValueChange = {
+                    // Asegura que solo se ingresen números y no más de 9 dígitos
+                    if (it.length <= 9 && it.matches("^[0-9]*$".toRegex())) {
+                        celular.value = it
+                    }
+                    celularError.value = celular.value.isEmpty() || celular.value.length != 9
+                },
+                label = "Celular",
+                modifier = Modifier.fillMaxWidth(),
+                isError = celularError.value,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+            )
+
+            // Campo de Fecha de Nacimiento
+            OutlinedTextField(
+                value = selectedDate,
+                onValueChange = { },
+                label = { Text("Fecha de Nacimiento") },
+                readOnly = true,
+                trailingIcon = {
+                    IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Select date"
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .background(MaterialTheme.colorScheme.surface),
+                colors = TextFieldDefaults.textFieldColors(
+                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
+
+            // Dialog de selección de fecha
+            if (showDatePicker) {
+                DatePickerDialog(datePickerState, onDismiss = { showDatePicker = false })
+            }
+
+            // Contraseña y Confirmar Contraseña
+            PasswordField(
+                value = contrasena.value,
+                onValueChange = { contrasena.value = it },
+                label = "Contraseña",
+                showPassword = showPassword.value,
+                onTogglePasswordVisibility = { showPassword.value = !showPassword.value }
+            )
+
+            PasswordField(
+                value = confirmarContrasena.value,
+                onValueChange = { confirmarContrasena.value = it },
+                label = "Confirmar Contraseña",
+                showPassword = showConfirmPassword.value,
+                onTogglePasswordVisibility = { showConfirmPassword.value = !showConfirmPassword.value }
+            )
+
+            // Botón Registrarse
+            Button(
+                onClick = {
+                    // Validación de campos
+                    nombreError.value = nombre.value.isEmpty()
+                    apellidoError.value = apellido.value.isEmpty()
+                    celularError.value = celular.value.isEmpty() || celularError.value
+                    correoError.value = correo.value.isEmpty() || !isValidEmail(correo.value)
+                    contrasenaError.value = contrasena.value.isEmpty()
+                    confirmarContrasenaError.value = confirmarContrasena.value.isEmpty()
+
+                    if (nombre.value.isNotEmpty() &&
+                        apellido.value.isNotEmpty() &&
+                        celular.value.isNotEmpty() &&
+                        isValidEmail(correo.value) &&
+                        contrasena.value.isNotEmpty() &&
+                        contrasena.value == confirmarContrasena.value) {
+                        UserManager.addUser(context, correo.value, contrasena.value)
+                        onRegisterSuccess()
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = Color.White
+                )
+            ) {
+                Text(
+                    text = "Registrarse",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
