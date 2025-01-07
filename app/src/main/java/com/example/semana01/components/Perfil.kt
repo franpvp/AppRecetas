@@ -61,7 +61,7 @@ fun Perfil(navController: NavController) {
                         .clickable { selectedTab = 0 }
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
+                    painter = painterResource(id = R.drawable.ic_email),
                     contentDescription = "Search",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
