@@ -3,9 +3,7 @@ package com.example.semana01.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,57 +18,32 @@ import com.example.semana01.R
 @Composable
 fun Perfil(navController: NavController) {
     var selectedTab by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Slideable Content
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .pointerInput(Unit) {
-//                    detectHorizontalDragGestures { _, dragAmount ->
-//                        boxOffset += dragAmount
-//                    }
-//                }
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .offset(x = boxOffset.dp)
-//                    .fillMaxWidth()
-//                    .height(200.dp)
-//                    .padding(16.dp)
-//                    .background(MaterialTheme.colorScheme.primary)
-//            ) {
-//                Text(
-//                    text = "Slide Me!",
-//                    fontSize = 24.sp,
-//                    color = Color.White,
-//                    modifier = Modifier.align(Alignment.Center)
-//                )
-//            }
-//        }
 
+        // Columna principal con contenido
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())  // Agregar el scroll vertical aquí
+                .verticalScroll(rememberScrollState())
         ) {
             Text(
                 text = "Minuta Semanal",
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
         }
 
-        // Tab Bar at the Bottom
+        // Barra de navegación en la parte inferior
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(8.dp),
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -107,7 +80,57 @@ fun Perfil(navController: NavController) {
                         }
                 )
             }
+
+            // Botón para mostrar el pop-up de cierre de sesión con estilo mejorado
+            Button(
+                onClick = { showDialog = true },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Text("Cerrar sesión", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+
+        // Dialogo de confirmación para cerrar sesión con estilo Material Design
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text("¿Está seguro de que desea cerrar sesión?", style = MaterialTheme.typography.bodySmall) },
+                text = {
+                    Text("Se cerrará su sesión actual y perderá cualquier cambio no guardado.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            // Lógica para cerrar sesión (redirigir a Login)
+                            navController.navigate("login") // Navegar al login
+                            showDialog = false // Cerrar el diálogo
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text("Sí", style = MaterialTheme.typography.bodySmall)
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { showDialog = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        )
+                    ) {
+                        Text("Cancelar", style = MaterialTheme.typography.bodySmall)
+                    }
+                }
+            )
         }
     }
 }
-

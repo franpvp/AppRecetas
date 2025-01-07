@@ -6,29 +6,51 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.Color
-import androidx.navigation.NavController
+
 import androidx.compose.foundation.background
 import androidx.compose.material3.Text
+
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
 import com.example.semana01.R
 
 @Composable
 fun Menu(navController: NavController) {
     var selectedTab by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) } // Estado para mostrar el pop-up
 
-    // Tabulador
+    // Función para cerrar sesión (puedes personalizarla según tu lógica)
+    val handleLogout = {
+        navController.navigate("login")
+    }
+
+    // Contenedor principal
     Box(modifier = Modifier.fillMaxSize()) {
-        // Contenedor principal
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())  // Añadido scroll para mayor flexibilidad
         ) {
             // Foto de perfil
             Row(
@@ -44,6 +66,7 @@ fun Menu(navController: NavController) {
                         .size(100.dp)
                         .background(MaterialTheme.colorScheme.secondary, shape = MaterialTheme.shapes.medium)
                         .padding(8.dp)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium)
                 )
             }
 
@@ -52,53 +75,49 @@ fun Menu(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Opciones del menú como botones
+                val buttonModifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .height(48.dp)
+
                 Button(
-                    onClick = {
-                        navController.navigate("perfil") // Navegar a la pantalla de Mi Perfil
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                    onClick = { navController.navigate("perfil") },
+                    modifier = buttonModifier
                 ) {
-                    Text(text = "Mi Perfil")
+                    Text(text = "Mi Perfil", style = MaterialTheme.typography.bodySmall)
                 }
+
                 Button(
-                    onClick = {
-                        navController.navigate("forgotPassword") // Navegar a la pantalla de Cambio de Contraseña
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 12.dp)
+                    onClick = { navController.navigate("forgotPassword") },
+                    modifier = buttonModifier
                 ) {
-                    Text(text = "Cambio de Contraseña")
+                    Text(text = "Cambio de Contraseña", style = MaterialTheme.typography.bodySmall)
                 }
+
                 Button(
-                    onClick = {
-                        navController.navigate("contacto") // Navegar a la pantalla de Contacto
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
+                    onClick = { navController.navigate("contacto") },
+                    modifier = buttonModifier
                 ) {
-                    Text(text = "Contacto")
+                    Text(text = "Contacto", style = MaterialTheme.typography.bodySmall)
                 }
+
+                // Botón para cerrar sesión que muestra el pop-up
                 Button(
-                    onClick = {
-                        navController.navigate("login")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
+                    onClick = { showDialog = true },
+                    modifier = buttonModifier
                 ) {
-                    Text(text = "Cerrar Sesión")
+                    Text(text = "Cerrar Sesión", style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
 
-        // Tabulador
+        // Barra de navegación inferior
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -116,9 +135,10 @@ fun Menu(navController: NavController) {
                         .size(40.dp)
                         .clickable {
                             selectedTab = 0
-                            navController.navigate("home") // Navegar a la pantalla de inicio
+                            navController.navigate("home")
                         }
                 )
+
                 Icon(
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = "Search",
@@ -130,6 +150,7 @@ fun Menu(navController: NavController) {
                             navController.navigate("mensajes")
                         }
                 )
+
                 Icon(
                     painter = painterResource(id = R.drawable.ic_menu),
                     contentDescription = "Menu",
@@ -142,6 +163,32 @@ fun Menu(navController: NavController) {
                         }
                 )
             }
+        }
+
+        // Pop-up para confirmar el cierre de sesión
+        if (showDialog) {
+            AlertDialog(
+                onDismissRequest = { showDialog = false },
+                title = { Text(text = "¿Cerrar sesión?") },
+                text = { Text("¿Estás seguro de que deseas cerrar sesión?") },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            handleLogout() // Acción de cerrar sesión
+                            showDialog = false // Cerrar el pop-up
+                        }
+                    ) {
+                        Text("Sí")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { showDialog = false } // Cerrar el pop-up sin hacer nada
+                    ) {
+                        Text("No")
+                    }
+                }
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.semana01.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +20,6 @@ import androidx.compose.material3.ElevatedCard
 
 import androidx.navigation.NavController
 import com.example.semana01.R
-
 @Composable
 fun Home(navController: NavController) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -43,31 +43,37 @@ fun Home(navController: NavController) {
             FuncionalidadCard(
                 title = "Reconocimiento de Texto (OCR)",
                 description = "Extrae texto de documentos como PDFs e imágenes para convertirlo en audio o texto accesible.",
+                imageResId = R.drawable.ic_ocr,  // Agregar imagen relevante
                 onClick = { /* Acción al hacer clic, por ejemplo, navegar a una pantalla de OCR */ }
             )
             FuncionalidadCard(
                 title = "Clasificación Automática",
                 description = "Organiza documentos en categorías como contratos, recibos y más, para facilitar su gestión.",
+                imageResId = R.drawable.ic_classification,  // Imagen para clasificación
                 onClick = { /* Acción al hacer clic */ }
             )
             FuncionalidadCard(
                 title = "Accesibilidad Total",
                 description = "Interfaz optimizada para lectores de pantalla y comandos de voz, garantizando la independencia del usuario.",
+                imageResId = R.drawable.ic_accessibility,  // Imagen de accesibilidad
                 onClick = { /* Acción al hacer clic */ }
             )
             FuncionalidadCard(
                 title = "Traducción Automática",
                 description = "Convierte documentos en otros idiomas a tu idioma preferido para una comprensión más fácil.",
+                imageResId = R.drawable.ic_translation,  // Imagen para traducción
                 onClick = { /* Acción al hacer clic */ }
             )
             FuncionalidadCard(
                 title = "Validación de Firmas Digitales",
                 description = "Permite verificar la autenticidad de documentos con firmas digitales.",
+                imageResId = R.drawable.ic_signature,  // Imagen de firma digital
                 onClick = { /* Acción al hacer clic */ }
             )
             FuncionalidadCard(
                 title = "Seguridad y Privacidad",
                 description = "Encriptación de datos y autenticación segura para proteger tu información personal.",
+                imageResId = R.drawable.ic_security,  // Imagen de seguridad
                 onClick = { /* Acción al hacer clic */ }
             )
             Spacer(modifier = Modifier.height(64.dp))
@@ -123,9 +129,14 @@ fun Home(navController: NavController) {
     }
 }
 
-// Composable para la tarjeta de funcionalidad
+// Composable para la tarjeta de funcionalidad con imagen
 @Composable
-fun FuncionalidadCard(title: String, description: String, onClick: () -> Unit) {
+fun FuncionalidadCard(
+    title: String,
+    description: String,
+    imageResId: Int,  // Nuevo parámetro para la imagen
+    onClick: () -> Unit
+) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -135,22 +146,40 @@ fun FuncionalidadCard(title: String, description: String, onClick: () -> Unit) {
             .padding(8.dp)
             .clickable(onClick = onClick)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onSurface
+            // Imagen de la tarjeta
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = "Imagen funcionalidad",
+                modifier = Modifier
+                    .size(50.dp)
+                    .align(Alignment.CenterVertically)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // Título y descripción
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
