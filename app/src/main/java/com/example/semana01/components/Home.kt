@@ -25,6 +25,7 @@ fun Home(navController: NavController) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Box(modifier = Modifier.fillMaxSize()) {
+
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -36,7 +37,8 @@ fun Home(navController: NavController) {
             Text(
                 text = "Accesibilidad para Todos",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
             )
 
             // Tarjetas con funcionalidades
@@ -99,7 +101,7 @@ fun Home(navController: NavController) {
                     contentDescription = "Home",
                     tint = if (selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(20.dp)  // Tamaño modificado
+                        .size(30.dp)  // Tamaño modificado
                         .clickable { selectedTab = 0 }
                 )
                 Icon(
@@ -107,7 +109,7 @@ fun Home(navController: NavController) {
                     contentDescription = "Mensajes",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(20.dp)  // Tamaño modificado
+                        .size(30.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 1
                             navController.navigate("mensajes")
@@ -118,7 +120,7 @@ fun Home(navController: NavController) {
                     contentDescription = "Menu",
                     tint = if (selectedTab == 2) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(20.dp)  // Tamaño modificado
+                        .size(30.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 2
                             navController.navigate("menu")

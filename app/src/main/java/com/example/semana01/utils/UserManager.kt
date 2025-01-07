@@ -78,12 +78,16 @@ object UserManager {
         val user = users.find { it.email == email }
         return if (user != null) {
             user.password = newPassword
-            user.resetCode = null // Limpiar el código después del cambio
+            user.resetCode = null
             saveUsersToPrefs(context, users)
             true
         } else {
             false
         }
+    }
+    fun saveLoggedInUserEmail(context: Context, email: String) {
+        val sharedPreferences = getPreferences(context)
+        sharedPreferences.edit().putString("logged_in_email", email).apply()
     }
 }
 

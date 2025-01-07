@@ -21,8 +21,6 @@ fun Perfil(navController: NavController) {
     var showDialog by remember { mutableStateOf(false) } // Estado para mostrar el diálogo
 
     Box(modifier = Modifier.fillMaxSize()) {
-
-        // Columna principal con contenido
         Column(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -37,7 +35,6 @@ fun Perfil(navController: NavController) {
             )
         }
 
-        // Barra de navegación en la parte inferior
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -57,26 +54,29 @@ fun Perfil(navController: NavController) {
                     contentDescription = "Home",
                     tint = if (selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)  // Tamaño modificado
                         .clickable { selectedTab = 0 }
                 )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_email),
-                    contentDescription = "Search",
+                    contentDescription = "Mensajes",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
-                        .clickable { selectedTab = 1 }
+                        .size(30.dp)  // Tamaño modificado
+                        .clickable {
+                            selectedTab = 1
+                            navController.navigate("mensajes")
+                        }
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_user),
-                    contentDescription = "User Profile",
+                    painter = painterResource(id = R.drawable.ic_menu),
+                    contentDescription = "Menu",
                     tint = if (selectedTab == 2) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 2
-                            navController.navigate("menu") // Navega al menú (componente Menu)
+                            navController.navigate("menu")
                         }
                 )
             }

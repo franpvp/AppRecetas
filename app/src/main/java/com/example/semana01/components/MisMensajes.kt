@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +60,19 @@ fun MisMensajes(navController: NavController) {
 //                )
 //            }
 //        }
+        // Botón de volver en la esquina superior izquierda
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .align(Alignment.TopStart) // Posicionar en la esquina superior izquierda
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back),
+                contentDescription = "Volver",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -68,14 +82,13 @@ fun MisMensajes(navController: NavController) {
                 .verticalScroll(rememberScrollState())  // Agregar el scroll vertical aquí
         ) {
             Text(
-                text = "Minuta Semanal",
+                text = "Mis Mensajes",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(bottom = 20.dp)
             )
-
         }
 
-        // Tab Bar at the Bottom
+        // Tab
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -95,15 +108,15 @@ fun MisMensajes(navController: NavController) {
                     contentDescription = "Home",
                     tint = if (selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)  // Tamaño modificado
                         .clickable { selectedTab = 0 }
                 )
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
+                    painter = painterResource(id = R.drawable.ic_email),
                     contentDescription = "Mensajes",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 1
                             navController.navigate("mensajes")
@@ -114,10 +127,10 @@ fun MisMensajes(navController: NavController) {
                     contentDescription = "Menu",
                     tint = if (selectedTab == 2) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)  // Tamaño modificado
                         .clickable {
                             selectedTab = 2
-                            navController.navigate("menu") // Navega al menú (componente Menu)
+                            navController.navigate("menu")
                         }
                 )
             }

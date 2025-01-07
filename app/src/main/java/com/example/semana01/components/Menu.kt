@@ -13,6 +13,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 
 
@@ -32,6 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.sp
 import com.example.semana01.R
 
 @Composable
@@ -46,13 +52,29 @@ fun Menu(navController: NavController) {
 
     // Contenedor principal
     Box(modifier = Modifier.fillMaxSize()) {
+        // Botón de volver en la esquina superior izquierda
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .align(Alignment.TopStart) // Posicionar en la esquina superior izquierda
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_back),
+                contentDescription = "Volver",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+        // Contenedor principal centrado
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState())  // Añadido scroll para mayor flexibilidad
+                .verticalScroll(rememberScrollState())
+                .align(Alignment.Center),
+            verticalArrangement = Arrangement.Center // Centrar verticalmente los elementos dentro de la columna
         ) {
-            // Foto de perfil
+            // Foto de perfil centrada
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -63,14 +85,27 @@ fun Menu(navController: NavController) {
                     painter = painterResource(id = R.drawable.ic_user),
                     contentDescription = "Foto de Perfil",
                     modifier = Modifier
-                        .size(100.dp)
-                        .background(MaterialTheme.colorScheme.secondary, shape = MaterialTheme.shapes.medium)
-                        .padding(8.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium)
+                        .size(170.dp)
+                        .clip(CircleShape) // Recorta la imagen en forma circular
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape) // Borde suave
+                        .shadow(4.dp, CircleShape) // Sombra suave
+                        .background(MaterialTheme.colorScheme.secondary, shape = CircleShape) // Fondo circular
+                        .padding(40.dp)
                 )
             }
+            Text(
+                text = "Nombre de usuario test",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center // Centrar el texto
+            )
 
-            // Opciones del menú
+            Spacer(modifier = Modifier.height(70.dp))
+
+            // Opciones del menú centradas
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -82,24 +117,36 @@ fun Menu(navController: NavController) {
                     .height(48.dp)
 
                 Button(
-                    onClick = { navController.navigate("perfil") },
-                    modifier = buttonModifier
+                    onClick = {
+                        navController.navigate("perfil") // Navegar a la pantalla de Mi Perfil
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
                 ) {
-                    Text(text = "Mi Perfil", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "Mi Perfil",
+                        fontSize = 16.sp
+                    )
                 }
 
                 Button(
                     onClick = { navController.navigate("forgotPassword") },
                     modifier = buttonModifier
                 ) {
-                    Text(text = "Cambio de Contraseña", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "Cambio de Contraseña",
+                        fontSize = 16.sp
+                    )
                 }
 
                 Button(
                     onClick = { navController.navigate("contacto") },
                     modifier = buttonModifier
                 ) {
-                    Text(text = "Contacto", style = MaterialTheme.typography.bodySmall)
+                    Text(text = "Contacto",
+                        fontSize = 16.sp
+                    )
                 }
 
                 // Botón para cerrar sesión que muestra el pop-up
@@ -107,12 +154,14 @@ fun Menu(navController: NavController) {
                     onClick = { showDialog = true },
                     modifier = buttonModifier
                 ) {
-                    Text(text = "Cerrar Sesión", style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "Cerrar Sesión",
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
 
-        // Barra de navegación inferior
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -132,7 +181,7 @@ fun Menu(navController: NavController) {
                     contentDescription = "Home",
                     tint = if (selectedTab == 0) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)
                         .clickable {
                             selectedTab = 0
                             navController.navigate("home")
@@ -144,7 +193,7 @@ fun Menu(navController: NavController) {
                     contentDescription = "Search",
                     tint = if (selectedTab == 1) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)
                         .clickable {
                             selectedTab = 1
                             navController.navigate("mensajes")
@@ -156,7 +205,7 @@ fun Menu(navController: NavController) {
                     contentDescription = "Menu",
                     tint = if (selectedTab == 2) MaterialTheme.colorScheme.primary else Color.Gray,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(30.dp)
                         .clickable {
                             selectedTab = 2
                             navController.navigate("menu")
